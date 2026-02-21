@@ -344,7 +344,7 @@ def make_pruned_parameters_trainable(model):
 
 if __name__ == '__main__':
     
-    mode = 'aware' # demo # aware
+    mode = 'train' # demo # aware
     quan_mode = 'custom'
     trainloader, testloader = data_loader()
     net = Net(q=True).cuda()
