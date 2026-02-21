@@ -280,11 +280,11 @@ def test(model: nn.Module, dataloader: DataLoader, cuda=False) -> float:
 
 
 def data_loader():
-    transform = transforms.Compose([transforms.ToTensor()]) # , transforms.Normalize((0.5,), (0.5,))
+    transform = transforms.Compose([transforms.ToTensor()])
     trainset = torchvision.datasets.MNIST(root='./data', train=True, download=True, transform=transform)
-    trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True, num_workers=16, pin_memory=True)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True, num_workers=4, pin_memory=True)
     testset = torchvision.datasets.MNIST(root='./data', train=False, download=True, transform=transform)
-    testloader = torch.utils.data.DataLoader(testset, batch_size=64, shuffle=False, num_workers=16, pin_memory=True)
+    testloader = torch.utils.data.DataLoader(testset, batch_size=64, shuffle=False, num_workers=4, pin_memory=True)
     
     return trainloader, testloader
 
@@ -344,18 +344,18 @@ def make_pruned_parameters_trainable(model):
 
 if __name__ == '__main__':
     
-    mode = 'train' # demo # aware
+    mode = 'train' 
     quan_mode = 'custom'
     trainloader, testloader = data_loader()
-    net = Net(q=True).cuda()
+    net = Net(q=True)  # .cuda() 제거
     epoches = 20
     print("The model size without quantization")
     print_size_of_model(net)
     
     if mode == 'train':
         print_size_of_model(net)
-        train(net, trainloader, cuda=True)
-        score = test(net, testloader, cuda=True)
+        train(net, trainloader, cuda=False)  # cuda=False 로 변경
+        score = test(net, testloader, cuda=False)  # cuda=False 로 변경
         print('Accuracy of the network on the test images: {}% - FP32'.format(score))
         
         torch.save(net.state_dict(), 'path_to_save_model.pth')
